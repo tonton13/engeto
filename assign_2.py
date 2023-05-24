@@ -44,11 +44,11 @@ for turn in range(1, 11):
     while True:
         print(turn)
         print(type(turn))
-        player_choice = input(f"PLAYER {player}: Please provide number of cell for occupation: ")
         if turn == 10:
             print("DRAW: Game is finished")
             quit("Thank you for playing")
-        elif player_choice.isnumeric() and player_choice in ttt_dict.values():
+        player_choice = input(f"PLAYER {player}: Please provide number of cell for occupation: ")
+        if player_choice.isnumeric() and player_choice in ttt_dict.values():
             position = get_position(player_choice)
             ttt_dict[position] = player
             break
