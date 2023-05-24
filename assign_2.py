@@ -42,8 +42,6 @@ for turn in range(1, 11):
     player = 'X' if turn % 2 == 1 else "O"
 
     while True:
-        print(turn)
-        print(type(turn))
         if turn == 10:
             print("DRAW: Game is finished")
             quit("Thank you for playing")
