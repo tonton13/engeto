@@ -5,6 +5,21 @@ email: tonton.chirkov@gmail.com
 discord: TonTon#9968
 """
 
+print('''
+Welcome to Tic Tac Toe
+========================================
+GAME RULES:
+Each player can place one mark (or stone)
+per turn on the 3x3 grid. The WINNER is
+who succeeds in placing three of theirs
+marks in a:
+* horizontal,
+* vertical or
+* diagonal row
+========================================
+Let's start the game
+''')
+
 ttt_dict = {"UL": "1", "UM": "2", "UR": "3", "CL": "4", "CM": "5", "CR": "6", "BL": "7", "BM": "8", "BR": "9"}
 
 
