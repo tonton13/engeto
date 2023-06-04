@@ -1,74 +1,51 @@
 import csv
 
 
-def word_count(text: str) -> int:
+def count_words(text: str) -> int:
+    return len(text.split())
+
+
+def count_words_with_condition(text: str, condition_func) -> int:
     counter = 0
-    for word in text.split(sep=" "):
-        counter += 1
-    return counter
-
-
-def titlecase_count(text: str) -> int:
-    counter = 0
-    for word in text.split(sep=" "):
-        if len(word) > 0 and word[0].isupper():
-            counter += 1
-    return counter
-
-
-def capitalize_count(text: str) -> int:
-    counter = 0
-    for word in text.split(sep=" "):
-        if len(word) > 0 and word.isupper() and not word[0].isdigit():
-            counter += 1
-    return counter
-
-
-def lowercase_count(text: str) -> int:
-    counter = 0
-    for word in text.split(sep=" "):
-        if word.islower():
-            counter += 1
-    return counter
-
-
-def numbers_count(text: str) -> int:
-    counter = 0
-    for word in text.split(sep=" "):
-        if word.isnumeric():
-            counter += 1
-    return counter
-
-
-def numbers_sum(text: str) -> int:
-    counter = 0
-    for word in text.split(sep=" "):
-        if word.isnumeric():
-            counter += int(word)
-    return counter
-
-
-def graphical_output(text: str):
-    graph_list = []
     for word in text.split():
-        count = int(len(word))
-        graph_list.append(count)
+        if condition_func(word):
+            counter += 1
+    return counter
+
+
+def is_titlecase(word: str) -> bool:
+    return len(word) > 0 and word[0].isupper()
+
+
+def is_capitalized(word: str) -> bool:
+    return len(word) > 0 and word.isupper() and not word[0].isdigit()
+
+
+def is_lowercase(word: str) -> bool:
+    return word.islower()
+
+
+def is_numeric(word: str) -> bool:
+    return word.isnumeric()
+
+
+def sum_numbers(text: str) -> int:
+    total = 0
+    for word in text.split():
+        if word.isnumeric():
+            total += int(word)
+    return total
+
+
+def generate_graphical_output(text: str):
     graph_dict = {}
-    for num in graph_list:
-        if num in graph_dict:
-            graph_dict[num] += 1
-        else:
-            graph_dict[num] = 1
+    for word in text.split():
+        length = sum(1 for char in word if char.isalnum())
+        graph_dict[length] = graph_dict.get(length, 0) + 1
     sorted_dict = dict(sorted(graph_dict.items()))
-    # max_length_word = max(graph_list)
-    # for count in sorted_dict:
-    #     asterisks = "*" * count[1]
-    #     spaces = " " * (max_length_word - count[1])
-    #     bar = asterisks + spaces
-    #     print(f"{str(count[0]).rjust(2)} |{bar} | {str(count[1]).rjust(1)}")
+
     for length, count in sorted_dict.items():
         print(f"{length:>3}|{'*' * count:18}|{count:>2}")
-
 
 
 TEXTS = ['''
@@ -100,44 +77,50 @@ garpike and stingray are also present.'''
 ]
 
 
-with open("user_logins.csv") as logins_file:
-    next(logins_file)
-    logins = dict([row for row in csv.reader(logins_file, delimiter=",")])
+def login(logins):
+    username_input = input("Please provide your username: ")
+    if username_input not in logins:
+        quit("Unregistered user, exit program")
 
-# print(logins)
-
-username_input = input("Please provide your username: ")
-
-logged = False
-if username_input in logins:
     userpass_input = input("Please provide your password: ")
-    if userpass_input == logins[username_input]:
-        logged = True
-    else:
+    if userpass_input != logins[username_input]:
         quit("Incorrect password, exit program")
-else:
-    quit("Unregistered user, exit program")
 
-if logged:
     print("----------------------------------------")
     print(f"Welcome to the app, {username_input}")
     print("We have 3 texts to be analyzed")
     print("----------------------------------------")
-    selected_text = input("Enter a number btw. 1 and 3 to select: ")
-    if selected_text not in ["1", "2", "3"]:
-        quit("provided number is not correct, you must choose 1, 2 or 3")
-    selected_text = int(selected_text)
-    chosen_number = selected_text - 1
-    print("----------------------------------------")
-    print(f"There are {word_count(TEXTS[chosen_number])} words in the selected text.")
-    print(f"There are {titlecase_count(TEXTS[chosen_number])} titlecase words.")
-    print(f"There are {capitalize_count(TEXTS[chosen_number])} uppercase words.")
-    print(f"There are {lowercase_count(TEXTS[chosen_number])} lowercase words.")
-    print(f"There are {numbers_count(TEXTS[chosen_number])} number string.")
-    print(f"The sum of all the numbers {numbers_sum(TEXTS[chosen_number])}")
-    print("----------------------------------------")
-    print("LEN|    OCCURENCES    |NR.")
-    print("----------------------------------------")
-    print(graphical_output(TEXTS[chosen_number]))
+    return int(input("Enter a number between 1 and 3 to select a text: ")) - 1
 
-quit("Program finished successfully!")
+
+def analyze_text(text_index):
+    if not 0 <= text_index < len(TEXTS):
+        quit("The provided number is not correct. You must choose 1, 2, or 3")
+
+    selected_text = TEXTS[text_index]
+    print("----------------------------------------")
+    print(f"There are {count_words(selected_text)} words in the selected text.")
+    print(f"There are {count_words_with_condition(selected_text, is_titlecase)} titlecase words.")
+    print(f"There are {count_words_with_condition(selected_text, is_capitalized)} uppercase words.")
+    print(f"There are {count_words_with_condition(selected_text, is_lowercase)} lowercase words.")
+    print(f"There are {count_words_with_condition(selected_text, is_numeric)} number strings.")
+    print(f"The sum of all the numbers: {sum_numbers(selected_text)}")
+    print("----------------------------------------")
+    print("LEN|    OCCURRENCES    |NR.")
+    print("----------------------------------------")
+    generate_graphical_output(selected_text)
+
+
+def main():
+    with open("user_logins.csv") as logins_file:
+        next(logins_file)
+        logins = dict(row for row in csv.reader(logins_file, delimiter=","))
+
+    text_index = login(logins)
+    analyze_text(text_index)
+
+    print("Program finished successfully!")
+
+
+if __name__ == "__main__":
+    main()
