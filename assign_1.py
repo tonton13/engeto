@@ -48,6 +48,9 @@ def generate_graphical_output(text: str):
         print(f"{length:>3}|{'*' * count:18}|{count:>2}")
 
 
+if __name__ == "__main__":
+
+
 TEXTS = ['''
 Situated about 10 miles west of Kemmerer,
 Fossil Butte is a ruggedly impressive
@@ -122,5 +125,4 @@ def main():
     print("Program finished successfully!")
 
 
-if __name__ == "__main__":
-    main()
+
